@@ -42,21 +42,25 @@ curl http://localhost:16686/api/metrics/minstep
 
 ## Query Metrics
 
-`/api/metrics/{metric_type}/{service_list}?{parameters}`
+`/api/metrics/{metric_type}/{service_list}?{query_string}`
 
 Queries R.E.D. metrics.
 
-### `metric_type``
+## Explanation of Parameters
+
+`metric_type`
+
 Mandatory.
 
 The type of metrics to query for, one of: `latencies`, `calls` and `errors`
 
-### service_list
+`service_list`
+
 Mandatory.
 
 A comma-separated list of services to query metrics for.
 
-### parameters
+`query_string`
 
 Required for `latencies`.
 
