@@ -86,7 +86,7 @@ e.g. a min step of 1 means the backend can only return data points that are at l
 
 # Disabling Metrics Querying
 
-Simply remove/comment out the METRICS_STORAGE_TYPE environment variable in the docker-compose.yml file.
+Simply remove/comment out the `METRICS_STORAGE_TYPE` environment variable in the [docker-compose.yml](./docker-compose.yml) file.
 
 Then querying any metrics endpoints results in an error message:
 ```
