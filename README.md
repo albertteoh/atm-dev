@@ -40,13 +40,13 @@ curl http://localhost:16686/api/metrics/minstep
 
 # HTTP API
 
-- Query Metrics: `/api/metrics/{metric_type}/{service_list}?{parameters}`
-- Min Step: `/api/metrics/minstep`
-
 ## Query Metrics
+
+`/api/metrics/{metric_type}/{service_list}?{parameters}`
+
 Queries R.E.D. metrics.
 
-### metric_type
+### `metric_type``
 Mandatory.
 
 The type of metrics to query for, one of: `latencies`, `calls` and `errors`
@@ -72,5 +72,8 @@ Optional.
 - `ratePer`: The duration in which the per-second rate of change is calculated for a cumulative counter metric. Default: 10m.
 
 ## Min Step
+
+`/api/metrics/minstep`
+
 Gets the min time resolution supported by the backing metrics store, in milliseconds, that can be used in the `step` parameter.
 e.g. a min step of 1 means the backend can only return data points that are at least 1ms apart, not closer.
