@@ -1,0 +1,71 @@
+version: "3.5"
+services:
+  cassandra:
+    networks:
+      - backend
+    image: cassandra:latest
+  jaeger_agent:
+    networks:
+      - backend
+    image: jaegertracing/jaeger-agent
+    environment:
+      - REPORTER_GRPC_HOST_PORT=jaeger_collector:14250
+    depends_on:
+      - "jaeger_collector"
+  jaeger_collector:
+    networks:
+      - backend
+    image: jaegertracing/jaeger-collector
+    environment:
+      - SPAN_STORAGE_TYPE=cassandra
+      - CASSANDRA_SERVERS=cassandra
+    ports:
+      - "14250:14250"
+      - "14268:14268"
+    depends_on:
+      - "cassandra"
+  jaeger_query:
+    networks:
+      - backend
+    image: albteo/jaeger-query
+    environment:
+      - JAEGER_AGENT_HOST=jaeger_agent
+      - SPAN_STORAGE_TYPE=cassandra
+      - CASSANDRA_SERVERS=cassandra
+        #- METRICS_STORAGE_TYPE=prometheus
+    ports:
+      - "16686:16686"
+    depends_on:
+      - "jaeger_agent"
+      - "cassandra"
+  otel_collector:
+    networks:
+      - backend
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - "./otelcol-prom-only.yml:/etc/otelcol/otelcol-prom-only.yml"
+    command: --config /etc/otelcol/otelcol-prom-only.yml
+    ports:
+      - "8889:8889"
+  synthetic_trace_generator:
+    networks:
+      - backend
+    image: omnition/synthetic-load-generator:latest
+    volumes:
+      - "./hipster-shop.json:/etc/synthetic-trace-generator/hipster-shop.json"
+    environment: 
+      - JAEGER_COLLECTOR_URL=http://otel_collector:14278
+      - TOPOLOGY_FILE=/etc/synthetic-trace-generator/hipster-shop.json
+  prometheus:
+    expose:
+      - "9090"
+    ports:
+      - "0.0.0.0:9090:9090"
+    networks:
+      - backend
+    image: prom/prometheus:latest
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+ 
+networks:
+  backend:
