@@ -60,6 +60,8 @@ Mandatory.
 
 A comma-separated list of services to query metrics for.
 
+Example: `emailservice,frontend`
+
 `query_string`
 
 Required for `latencies`.
