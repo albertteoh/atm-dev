@@ -1,43 +1,5 @@
 version: "3.5"
 services:
-  cassandra:
-    networks:
-      - backend
-    image: cassandra:latest
-  jaeger_agent:
-    networks:
-      - backend
-    image: jaegertracing/jaeger-agent
-    environment:
-      - REPORTER_GRPC_HOST_PORT=jaeger_collector:14250
-    depends_on:
-      - "jaeger_collector"
-  jaeger_collector:
-    networks:
-      - backend
-    image: jaegertracing/jaeger-collector
-    environment:
-      - SPAN_STORAGE_TYPE=cassandra
-      - CASSANDRA_SERVERS=cassandra
-    ports:
-      - "14250:14250"
-      - "14268:14268"
-    depends_on:
-      - "cassandra"
-  jaeger_query:
-    networks:
-      - backend
-    image: albteo/jaeger-query
-    environment:
-      - JAEGER_AGENT_HOST=jaeger_agent
-      - SPAN_STORAGE_TYPE=cassandra
-      - CASSANDRA_SERVERS=cassandra
-        #- METRICS_STORAGE_TYPE=prometheus
-    ports:
-      - "16686:16686"
-    depends_on:
-      - "jaeger_agent"
-      - "cassandra"
   otel_collector:
     networks:
       - backend
