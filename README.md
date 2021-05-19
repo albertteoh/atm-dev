@@ -14,7 +14,7 @@ Fetch call rates for both the emailservice and frontend services from now,
 looking back 1 second with a sliding window of 1m and step size of 1 millisecond
 
 ```
-curl http://localhost:16686/api/metrics/calls/emailservice,frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000
+curl http://localhost:16686/api/metrics/calls/emailservice,frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
 ```
 
 
@@ -23,19 +23,19 @@ Fetch P95 latencies for both the emailservice and frontend services from now,
 looking back 1 second with a sliding window of 1m and step size of 1 millisecond
 
 ```
-curl http://localhost:16686/api/metrics/latencies/emailservice,frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000
+curl http://localhost:16686/api/metrics/latencies/emailservice,frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
 ```
 
 ## Example 3
 Fetch error rates for both emailservice and frontend services using default parameters.
 ```
-curl http://localhost:16686/api/metrics/errors/emailservice,frontend
+curl http://localhost:16686/api/metrics/errors/emailservice,frontend | jq .
 ```
 
 ## Example 4
 Fetch the minimum step size supported by the underlying metrics store.
 ```
-curl http://localhost:16686/api/metrics/minstep
+curl http://localhost:16686/api/metrics/minstep | jq .
 ```
 
 # HTTP API
