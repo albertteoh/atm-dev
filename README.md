@@ -70,12 +70,12 @@ Required for `latencies`.
 
 Optional.
 
-- `endTs`: The posix milliseconds timestamp of the end time range of the metrics query. Default: now.
+- `endTs`: The posix milliseconds timestamp of the end time range of the metrics query. Default: `now`.
 - `lookback`: The duration, in milliseconds, from endTs to look back on for metrics data points.
-  For example, if set to `3600000` (1 hour), the query would span from `endTs - 1 hour` to `endTs`. Default: 1h.
+  For example, if set to `3600000` (1 hour), the query would span from `endTs - 1 hour` to `endTs`. Default: `3600000` (1 hour).
 - `step`: The duration, in milliseconds, between data points of the query results.
-  For example, if set to 5s, the results would produce a data point every 5 seconds from the `endTs - lookback` to `endTs`. Default: 5s.
-- `ratePer`: The duration in which the per-second rate of change is calculated for a cumulative counter metric. Default: 10m.
+  For example, if set to 5s, the results would produce a data point every 5 seconds from the `endTs - lookback` to `endTs`. Default: `5000` (5 seconds).
+- `ratePer`: The duration, in milliseconds, in which the per-second rate of change is calculated for a cumulative counter metric. Default: `600000` (10 minutes).
 
 ## Min Step
 
@@ -103,4 +103,52 @@ $ curl http://localhost:16686/api/metrics/minstep | jq .
     }
   ]
 }
+```
+
+## Response
+
+The response data model is based on [`MetricsFamily`](https://github.com/jaegertracing/jaeger/blob/master/model/proto/metrics/openmetrics.proto#L53).
+
+For example:
+```
+{
+  "name": "service_call_rate",
+  "type": "GAUGE",
+  "help": "calls/sec, grouped by service",
+  "metrics": [
+    {
+      "labels": [
+        {
+          "name": "service_name",
+          "value": "emailservice"
+        }
+      ],
+      "metricPoints": [
+        {
+          "gaugeValue": {
+            "doubleValue": 0.005846808321083344
+          },
+          "timestamp": "2021-06-03T09:12:06Z"
+        },
+        {
+          "gaugeValue": {
+            "doubleValue": 0.006960443672323934
+          },
+          "timestamp": "2021-06-03T09:12:11Z"
+        },
+...
+  ```
+  
+If the `groupByOperation=true` parameter is set, the response will include the operation name in the labels like so:
+```
+      "labels": [
+        {
+          "name": "operation",
+          "value": "/SendOrderConfirmation"
+        },
+        {
+          "name": "service_name",
+          "value": "emailservice"
+        }
+      ],
 ```
