@@ -10,11 +10,11 @@ docker compose down
 ```
 
 ## Example 1
-Fetch call rates for both the emailservice and frontend services from now,
+Fetch call rates for both the emailservice and frontend services, grouped by operation, from now,
 looking back 1 second with a sliding window of 1m and step size of 1 millisecond
 
 ```
-curl http://localhost:16686/api/metrics/calls/emailservice,frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
+curl http://localhost:16686/api/metrics/calls/emailservice,frontend?groupByOperation=true&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
 ```
 
 
@@ -70,6 +70,10 @@ Required for `latencies`.
 
 Optional.
 
+- `groupByOperation`: A boolean value which will determine if the metrics query will also group by operation. Default: `false`.
+  Allowed values:
+  - True: `1`, `t`, `T`, `true`, `TRUE`, `True`
+  - False: `0`, `f`, `F`, `false`, `FALSE`, `False`
 - `endTs`: The posix milliseconds timestamp of the end time range of the metrics query. Default: `now`.
 - `lookback`: The duration, in milliseconds, from endTs to look back on for metrics data points.
   For example, if set to `3600000` (1 hour), the query would span from `endTs - 1 hour` to `endTs`. Default: `3600000` (1 hour).
