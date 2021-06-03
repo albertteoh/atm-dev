@@ -54,6 +54,8 @@ Mandatory.
 
 The type of metrics to query for, one of: `latencies`, `calls` and `errors`
 
+ <hr />
+ 
 `service_list`
 
 Mandatory.
@@ -62,13 +64,15 @@ A comma-separated list of services to query metrics for.
 
 Example: `emailservice,frontend`
 
+ <hr />
+
 `query_string`
 
-Required for `latencies`.
+**Required** for `latencies`
 
 - `quantile`: The quantile to compute the latency "P" value. Valid numbers range from `0 - 1`, inclusive.
 
-Optional.
+**Optional**
 
 - `groupByOperation`: A boolean value which will determine if the metrics query will also group by operation. Default: `false`.
   Allowed values:
