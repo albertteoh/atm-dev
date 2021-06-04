@@ -74,16 +74,21 @@ Example: `emailservice,frontend`
 
 **Optional**
 
-- `groupByOperation`: A boolean value which will determine if the metrics query will also group by operation. Default: `false`.
-  Allowed values:
-  - True: `1`, `t`, `T`, `true`, `TRUE`, `True`
-  - False: `0`, `f`, `F`, `false`, `FALSE`, `False`
-- `endTs`: The posix milliseconds timestamp of the end time range of the metrics query. Default: `now`.
+- `groupByOperation`: A boolean value which will determine if the metrics query will also group by operation.
+  - **Default**: `false`
+  - **Allowed values**:
+    - **True**: `1`, `t`, `T`, `true`, `TRUE`, `True`
+    - **False**: `0`, `f`, `F`, `false`, `FALSE`, `False`
+- `endTs`: The posix milliseconds timestamp of the end time range of the metrics query.
+  - **Default**: `now`.
 - `lookback`: The duration, in milliseconds, from endTs to look back on for metrics data points.
-  For example, if set to `3600000` (1 hour), the query would span from `endTs - 1 hour` to `endTs`. Default: `3600000` (1 hour).
+  For example, if set to `3600000` (1 hour), the query would span from `endTs - 1 hour` to `endTs`.
+  - **Default**: `3600000` (1 hour).
 - `step`: The duration, in milliseconds, between data points of the query results.
-  For example, if set to 5s, the results would produce a data point every 5 seconds from the `endTs - lookback` to `endTs`. Default: `5000` (5 seconds).
-- `ratePer`: The duration, in milliseconds, in which the per-second rate of change is calculated for a cumulative counter metric. Default: `600000` (10 minutes).
+  For example, if set to 5s, the results would produce a data point every 5 seconds from the `endTs - lookback` to `endTs`.
+  - **Default**: `5000` (5 seconds).
+- `ratePer`: The duration, in milliseconds, in which the per-second rate of change is calculated for a cumulative counter metric.
+  - **Default**: `600000` (10 minutes).
 
 ## Min Step
 
