@@ -92,28 +92,7 @@ Example: `emailservice,frontend`
 Gets the min time resolution supported by the backing metrics store, in milliseconds, that can be used in the `step` parameter.
 e.g. a min step of 1 means the backend can only return data points that are at least 1ms apart, not closer.
 
-# Disabling Metrics Querying
-
-Simply remove/comment out the `METRICS_STORAGE_TYPE` environment variable in the [docker-compose.yml](./docker-compose.yml) file.
-
-Then querying any metrics endpoints results in an error message:
-```
-$ curl http://localhost:16686/api/metrics/minstep | jq .
-{
-  "data": null,
-  "total": 0,
-  "limit": 0,
-  "offset": 0,
-  "errors": [
-    {
-      "code": 405,
-      "msg": "metrics querying is currently disabled"
-    }
-  ]
-}
-```
-
-## Response
+## Responses
 
 The response data model is based on [`MetricsFamily`](https://github.com/jaegertracing/jaeger/blob/master/model/proto/metrics/openmetrics.proto#L53).
 
@@ -159,4 +138,25 @@ If the `groupByOperation=true` parameter is set, the response will include the o
           "value": "emailservice"
         }
       ],
+```
+
+# Disabling Metrics Querying
+
+Simply remove/comment out the `METRICS_STORAGE_TYPE` environment variable in the [docker-compose.yml](./docker-compose.yml) file.
+
+Then querying any metrics endpoints results in an error message:
+```
+$ curl http://localhost:16686/api/metrics/minstep | jq .
+{
+  "data": null,
+  "total": 0,
+  "limit": 0,
+  "offset": 0,
+  "errors": [
+    {
+      "code": 405,
+      "msg": "metrics querying is currently disabled"
+    }
+  ]
+}
 ```
