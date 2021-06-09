@@ -3,7 +3,7 @@ services:
   jaeger:
     networks:
       - backend
-    image: albteo/all-in-one
+    image: albteo/all-in-one:latest
     environment:
       - METRICS_STORAGE_TYPE=prometheus
       - PROMETHEUS_HOST_PORT=prometheus:9090
