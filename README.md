@@ -10,26 +10,26 @@ docker compose down
 ```
 
 ## Example 1
-Fetch call rates for both the emailservice and frontend services from now,
+Fetch call rates for both the emailservice and frontend services, grouped by operation, from now,
 looking back 1 second with a sliding window of 1m and step size of 1 millisecond
 
 ```
-curl http://localhost:16686/api/metrics/calls/emailservice,frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
+curl http://localhost:16686/api/metrics/calls?service=emailservice&service=frontend&groupByOperation=true&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
 ```
 
 
 ## Example 2
 Fetch P95 latencies for both the emailservice and frontend services from now,
-looking back 1 second with a sliding window of 1m and step size of 1 millisecond
+looking back 1 second with a sliding window of 1m and step size of 1 millisecond, where the span kind is either "server" or "client".
 
 ```
-curl http://localhost:16686/api/metrics/latencies/emailservice,frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
+curl http://localhost:16686/api/metrics/latencies?service=emailservice&service=frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000&spanKind=server&spanKind=client | jq .
 ```
 
 ## Example 3
 Fetch error rates for both emailservice and frontend services using default parameters.
 ```
-curl http://localhost:16686/api/metrics/errors/emailservice,frontend | jq .
+curl http://localhost:16686/api/metrics/errors?service=emailservice&service=frontend | jq .
 ```
 
 ## Example 4
@@ -42,40 +42,57 @@ curl http://localhost:16686/api/metrics/minstep | jq .
 
 ## Query Metrics
 
-`/api/metrics/{metric_type}/{service_list}?{query_string}`
+`/api/metrics/{metric_type}?{query}`
 
-Queries R.E.D. metrics.
+Where (Backus-Naur form):
+```
+metric_type = 'latencies' | 'calls' | 'errors'
 
-## Explanation of Parameters
+query = services , [ '&' optionalParams ]
 
-`metric_type`
+optionalParams = param | param '&' optionalParams
 
-Mandatory.
+param =  groupByOperation | quantile | endTs | lookback | step | ratePer | spanKinds
 
-The type of metrics to query for, one of: `latencies`, `calls` and `errors`
+services = service | service '&' services
+service = 'service=' strValue
+  - The list of services to include in the metrics selection filter, which are logically 'OR'ed.
+  - Mandatory.
 
-`service_list`
+quantile = 'quantile=' floatValue
+  - The quantile to compute the latency 'P' value. Valid range (0,1].
+  - Mandatory for 'latencies' type.
 
-Mandatory.
+groupByOperation = 'groupByOperation=' boolValue 
+boolValue = '1' | 't' | 'T' | 'true' | 'TRUE' | 'True' | 0 | 'f' | 'F' | 'false' | 'FALSE' | 'False'
+  - A boolean value which will determine if the metrics query will also group by operation.
+  - Optional with default: false
 
-A comma-separated list of services to query metrics for.
+endTs = 'endTs=' intValue
+  - The posix milliseconds timestamp of the end time range of the metrics query.
+  - Optional with default: now
 
-Example: `emailservice,frontend`
+lookback = 'lookback=' intValue
+  - The duration, in milliseconds, from endTs to look back on for metrics data points.
+  - For example, if set to `3600000` (1 hour), the query would span from `endTs - 1 hour` to `endTs`.
+  - Optional with default: 3600000 (1 hour).
 
-`query_string`
+step = 'step=' intValue
+  - The duration, in milliseconds, between data points of the query results.
+  - For example, if set to 5s, the results would produce a data point every 5 seconds from the `endTs - lookback` to `endTs`.
+  - Optional with default: 5000 (5 seconds).
 
-Required for `latencies`.
+ratePer = 'ratePer=' intValue
+  - The duration, in milliseconds, in which the per-second rate of change is calculated for a cumulative counter metric.
+  - Optional with default: 600000 (10 minutes).
 
-- `quantile`: The quantile to compute the latency "P" value. Valid numbers range from `0 - 1`, inclusive.
+spanKinds = spanKind | spanKind '&' spanKinds
+spanKind = 'spanKind=' spanKindType
+spanKindType = 'unspecified' | 'internal' | 'server' | 'client' | 'producer' | 'consumer'
+  - The list of spanKinds to include in the metrics selection filter, which are logically 'OR'ed.
+  - Optional with default: 'server'
+```
 
-Optional.
-
-- `endTs`: The posix milliseconds timestamp of the end time range of the metrics query. Default: now.
-- `lookback`: The duration, in milliseconds, from endTs to look back on for metrics data points.
-  For example, if set to `3600000` (1 hour), the query would span from `endTs - 1 hour` to `endTs`. Default: 1h.
-- `step`: The duration, in milliseconds, between data points of the query results.
-  For example, if set to 5s, the results would produce a data point every 5 seconds from the `endTs - lookback` to `endTs`. Default: 5s.
-- `ratePer`: The duration in which the per-second rate of change is calculated for a cumulative counter metric. Default: 10m.
 
 ## Min Step
 
@@ -83,6 +100,54 @@ Optional.
 
 Gets the min time resolution supported by the backing metrics store, in milliseconds, that can be used in the `step` parameter.
 e.g. a min step of 1 means the backend can only return data points that are at least 1ms apart, not closer.
+
+## Responses
+
+The response data model is based on [`MetricsFamily`](https://github.com/jaegertracing/jaeger/blob/master/model/proto/metrics/openmetrics.proto#L53).
+
+For example:
+```
+{
+  "name": "service_call_rate",
+  "type": "GAUGE",
+  "help": "calls/sec, grouped by service",
+  "metrics": [
+    {
+      "labels": [
+        {
+          "name": "service_name",
+          "value": "emailservice"
+        }
+      ],
+      "metricPoints": [
+        {
+          "gaugeValue": {
+            "doubleValue": 0.005846808321083344
+          },
+          "timestamp": "2021-06-03T09:12:06Z"
+        },
+        {
+          "gaugeValue": {
+            "doubleValue": 0.006960443672323934
+          },
+          "timestamp": "2021-06-03T09:12:11Z"
+        },
+...
+  ```
+  
+If the `groupByOperation=true` parameter is set, the response will include the operation name in the labels like so:
+```
+      "labels": [
+        {
+          "name": "operation",
+          "value": "/SendOrderConfirmation"
+        },
+        {
+          "name": "service_name",
+          "value": "emailservice"
+        }
+      ],
+```
 
 # Disabling Metrics Querying
 
