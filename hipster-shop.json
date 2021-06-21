@@ -10,31 +10,31 @@
             "route" : "/product",
             "downstreamCalls" : { "productcatalogservice" : "/GetProducts", "recommendationservice" : "/GetRecommendations", "adservice" : "/AdRequest" },
             "maxLatencyMillis": 200,
-            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "client"}} ]
+            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "server"}} ]
           },
           {
             "route" : "/cart",
             "downstreamCalls" : { "cartservice" : "/GetCart", "recommendationservice" : "/GetRecommendations" },
             "maxLatencyMillis" : 100,
-            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "client"}} ]
+            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "server"}} ]
           },
           {
             "route" : "/checkout",
             "downstreamCalls" : { "checkoutservice" : "/PlaceOrder" },
             "maxLatencyMillis" : 800,
-            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "client"}} ]
+            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "server"}} ]
           },
           {
             "route" : "/shipping",
             "downstreamCalls" : { "shippingservice" : "/GetQuote" },
             "maxLatencyMillis" : 50,
-            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "client"}} ]
+            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "server"}} ]
           },
           {
             "route" : "/currency",
             "downstreamCalls" : { "currencyservice" : "/GetConversion" },
             "maxLatencyMillis" : 50,
-            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "client"}} ]
+            "tagSets": [ { "weight": 1, "tags": { "span.kind" : "server"}} ]
           }
         ]
       },
