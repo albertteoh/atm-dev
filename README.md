@@ -9,34 +9,31 @@ docker compose up
 docker compose down
 ```
 
-## Example 1
-Fetch call rates for both the emailservice and frontend services, grouped by operation, from now,
+## Examples
+1. Fetch call rates for both the emailservice and frontend services, grouped by operation, from now,
 looking back 1 second with a sliding window of 1m and step size of 1 millisecond
 
-```
-curl http://localhost:16686/api/metrics/calls?service=emailservice&service=frontend&groupByOperation=true&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
-```
+    ```
+    curl http://localhost:16686/api/metrics/calls?service=emailservice&service=frontend&groupByOperation=true&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000 | jq .
+    ```
 
 
-## Example 2
-Fetch P95 latencies for both the emailservice and frontend services from now,
+2. Fetch P95 latencies for both the emailservice and frontend services from now,
 looking back 1 second with a sliding window of 1m and step size of 1 millisecond, where the span kind is either "server" or "client".
 
-```
-curl http://localhost:16686/api/metrics/latencies?service=emailservice&service=frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000&spanKind=server&spanKind=client | jq .
-```
+    ```
+    curl http://localhost:16686/api/metrics/latencies?service=emailservice&service=frontend?quantile=0.95&endTs=$(date +%s)000&lookback=1000&step=1&ratePer=60000&spanKind=server&spanKind=client | jq .
+    ```
 
-## Example 3
-Fetch error rates for both emailservice and frontend services using default parameters.
-```
-curl http://localhost:16686/api/metrics/errors?service=emailservice&service=frontend | jq .
-```
+3. Fetch error rates for both emailservice and frontend services using default parameters.
+    ```
+    curl http://localhost:16686/api/metrics/errors?service=emailservice&service=frontend | jq .
+    ```
 
-## Example 4
-Fetch the minimum step size supported by the underlying metrics store.
-```
-curl http://localhost:16686/api/metrics/minstep | jq .
-```
+4. Fetch the minimum step size supported by the underlying metrics store.
+    ```
+    curl http://localhost:16686/api/metrics/minstep | jq .
+    ```
 
 # HTTP API
 
